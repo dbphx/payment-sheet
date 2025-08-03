@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import LoginForm from "./components/login_form";
 import Dashboard from "./components/dashboard";
 import BlockDetail from "./components/block_detail";
+import LoginSSOCallback from "./components/login_sso";
 import { CssBaseline } from "@mui/material";
 
 const App = () => {
@@ -22,11 +23,14 @@ const App = () => {
       <Router>
         <Routes>
           {!token && (
-            <Route
-              path="/login"
-              element={<LoginForm onLogin={(t) => setToken(t)} />}
-            />
-          )}
+              <>
+                <Route
+                    path="/login"
+                    element={<LoginForm onLogin={(t) => setToken(t)} />}
+                />
+                <Route path="/login-sso/callback-ui" element={<LoginSSOCallback  onLogin={(t) => setToken(t)} />} />
+              </>
+        )}
           {token ? (
             <>
               <Route path="/home" element={<Dashboard />} />

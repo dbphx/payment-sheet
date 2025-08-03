@@ -14,6 +14,7 @@ var (
 	app         *fiber.App
 	bizInst     *mainbiz.MainBusiness
 	authInst    *authenhandler.AuthHandler
+	ssoInst     *authenhandler.SsoHandler
 	loggingInst *middlewarelogging.Logger
 )
 
@@ -31,6 +32,7 @@ func Factory() {
 	transactionRepo := repository.NewTransactionRepository(db)
 	userRepo := repository.NewUserRepository(db)
 	authInst = authenhandler.NewAuthHandler(userRepo)
+	ssoInst = authenhandler.NewSSOHandler(userRepo)
 	bizInst = mainbiz.NewMainBusiness(memberRepo, blockRepo, transactionRepo)
 	app = fiber.New()
 }
@@ -49,4 +51,8 @@ func GetLogging() *middlewarelogging.Logger {
 
 func GetAuth() *authenhandler.AuthHandler {
 	return authInst
+}
+
+func GetSSO() *authenhandler.SsoHandler {
+	return ssoInst
 }

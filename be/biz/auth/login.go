@@ -11,7 +11,7 @@ import (
 	"my-source/sheet-payment/be/repository"
 )
 
-var JwtSecret = []byte("j7akAxU")
+var JwtSecret []byte
 
 type AuthHandler struct {
 	UserRepo repository.IUserRepository
@@ -66,15 +66,24 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 		return fiber.ErrUnauthorized
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"username": user.Username,
-		"exp":      time.Now().Add(time.Hour * 24).Unix(),
-	})
-
-	tokenStr, err := token.SignedString(JwtSecret)
+	tokenStr, err := GenToken(user.Username)
 	if err != nil {
 		return fiber.ErrInternalServerError
 	}
 
 	return c.JSON(fiber.Map{"token": tokenStr})
+}
+
+func GenToken(username string) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"username": username,
+		"exp":      time.Now().Add(time.Hour * 24).Unix(),
+	})
+
+	tokenStr, err := token.SignedString(JwtSecret)
+	if err != nil {
+		return "", fiber.ErrInternalServerError
+	}
+
+	return tokenStr, nil
 }

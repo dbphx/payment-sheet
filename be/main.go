@@ -213,6 +213,14 @@ func updateTransaction(c *fiber.Ctx) error {
 	return factory.GetBiz().UpdateTransaction(c)
 }
 
+func loginSSO(c *fiber.Ctx) error {
+	return factory.GetSSO().LoginSSO(c)
+}
+
+func loginSSOCallback(c *fiber.Ctx) error {
+	return factory.GetSSO().LoginSSOCallback(c)
+}
+
 func main() {
 	factory.Factory()
 	app := factory.GetApp()
@@ -224,6 +232,8 @@ func main() {
 	app.Get("/swagger/*", swagger.HandlerDefault)
 	app.Post("/login", login)
 	app.Post("/register", register)
+	app.Get("/login-sso", loginSSO)
+	app.Get("/login-sso/callback", loginSSOCallback)
 
 	protected := app.Group("/", jwtware.New(jwtware.Config{
 		SigningKey: authenhandler.JwtSecret,
